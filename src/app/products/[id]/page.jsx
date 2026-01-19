@@ -1,11 +1,12 @@
 
 
+import { getSingleProduct } from '@/actions/server/Products';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaQuestionCircle, FaShoppingCart } from 'react-icons/fa';
 import { FaStar } from 'react-icons/fa6';
 import { MdQuestionAnswer } from "react-icons/md";
-import { getSingleProduct } from '@/actions/server/Products'; // adjust path if needed
+
 
 // ✅ Dynamic Metadata for SEO
 export async function generateMetadata({ params }) {
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }) {
 
 // ✅ Product Page Component
 const ProductDetails = async ({ params }) => {
-  const { id } = params;
+  const { id } = await params;
   const product = await getSingleProduct(id);
 
   // ❌ Product not found handling
