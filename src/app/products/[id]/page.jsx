@@ -1,31 +1,68 @@
-import { getSingleProduct } from '@/actions/server/Products';
+
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 import { FaQuestionCircle, FaShoppingCart } from 'react-icons/fa';
 import { FaStar } from 'react-icons/fa6';
 import { MdQuestionAnswer } from "react-icons/md";
+import { getSingleProduct } from '@/actions/server/Products'; // adjust path if needed
 
-const ProductDetails = async({params}) => { 
-    const {id} = await params;
-    const product = await getSingleProduct(id)
-    console.log("hello product",product) 
-    if(!product || Object.keys(product).length ===0 ){
-        return(
-             <div className="text-center p-10">
+// ✅ Dynamic Metadata for SEO
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const product = await getSingleProduct(id);
+
+  if (!product) {
+    return { title: "Product not found" };
+  }
+
+  return {
+    title: product.title,
+    description: product.description,
+    openGraph: {
+      title: product.title,
+      description: product.description,
+      images: [
+        {
+          url: product.image,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description: product.description,
+      images: [product.image],
+    },
+  };
+}
+
+// ✅ Product Page Component
+const ProductDetails = async ({ params }) => {
+  const { id } = params;
+  const product = await getSingleProduct(id);
+
+  // ❌ Product not found handling
+  if (!product || Object.keys(product).length === 0) {
+    return (
+      <div className="text-center p-10">
         <h2 className="text-xl font-bold">Product not found</h2>
         <Link href="/" className="text-blue-500 underline mt-4 block">
           Back to Products
         </Link>
       </div>
-        )
-    } 
-    const discountedPrice = product.discount
+    );
+  }
+
+  // ✅ Calculate discounted price if any
+  const discountedPrice = product.discount
     ? Math.round(product.price - (product.price * product.discount) / 100)
     : product.price;
-    return (
-          <div className="max-w-6xl mx-auto p-6 md:p-12">
+
+  return (
+    <div className="max-w-6xl mx-auto p-6 md:p-12">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Product Image */}
         <div className="relative w-full md:w-1/2 h-80 md:h-[500px] bg-gray-100 rounded-xl flex items-center justify-center">
@@ -83,7 +120,7 @@ const ProductDetails = async({params}) => {
               </div>
             )}
 
-            {/* Info List */}
+            {/* Key Features */}
             {product.info && product.info.length > 0 && (
               <div className="mb-6">
                 <h2 className="font-semibold text-lg mb-2">Key Features</h2>
@@ -98,11 +135,15 @@ const ProductDetails = async({params}) => {
             {/* Q&A */}
             {product.qna && product.qna.length > 0 && (
               <div className="mb-6">
-                <h2 className="font-semibold text-lg mb-2"> Q&A</h2>
+                <h2 className="font-semibold text-lg mb-2">Q&A</h2>
                 {product.qna.map((qa, idx) => (
                   <div key={idx} className="mb-2">
-                    <p className="font-medium text-red-500"> <FaQuestionCircle />{qa.question}</p>
-                    <p className="text-gray-700 ml-4"><MdQuestionAnswer/> {qa.answer}</p>
+                    <p className="font-medium text-red-500 flex items-center gap-2">
+                      <FaQuestionCircle /> {qa.question}
+                    </p>
+                    <p className="text-gray-700 ml-6 flex items-center gap-2">
+                      <MdQuestionAnswer /> {qa.answer}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -112,8 +153,7 @@ const ProductDetails = async({params}) => {
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <button className="btn btn-primary flex-1 flex items-center justify-center gap-2">
-              <FaShoppingCart />
-              Add to Cart
+              <FaShoppingCart /> Add to Cart
             </button>
             <Link href="/" className="btn btn-outline flex-1 text-center">
               Back to Products
@@ -122,7 +162,7 @@ const ProductDetails = async({params}) => {
         </div>
       </div>
     </div>
-    );
+  );
 };
 
 export default ProductDetails;
