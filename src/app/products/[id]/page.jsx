@@ -1,6 +1,7 @@
 
 
 import { getSingleProduct } from '@/actions/server/Products';
+import AddToCartBtn from '@/Components/products/AddToCartBtn';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaQuestionCircle, FaShoppingCart } from 'react-icons/fa';
@@ -153,13 +154,14 @@ const ProductDetails = async ({ params }) => {
 
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-4 mt-4">
-            <button className="btn btn-primary flex-1 flex items-center justify-center gap-2">
-              <FaShoppingCart /> Add to Cart
-            </button>
-            <Link href="/" className="btn btn-outline flex-1 text-center">
-              Back to Products
-            </Link>
-          </div>
+  
+  {/* এখানে আগের বাটনটি সরিয়ে আমাদের Client Component বসানো হলো */}
+  <AddToCartBtn product={product} />
+
+  <Link href="/" className="btn btn-outline flex-1 text-center">
+    Back to Products
+  </Link>
+</div>
         </div>
       </div>
     </div>

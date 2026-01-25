@@ -2,6 +2,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/Components/Navbar";
 import Footer from "@/Components/Footer";
+import { CartProvider } from "@/Context/CartContext";
 
 
 const poppins = Poppins({
@@ -53,7 +54,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
-        <header className="py-2 md:w-11/12 mx-auto">
+        <CartProvider>
+          <header className="py-2 md:w-11/12 mx-auto">
           <Navbar />
         </header>
 
@@ -64,6 +66,7 @@ export default function RootLayout({ children }) {
         <footer className="py-2 md:w-11/12 mx-auto">
           <Footer />
         </footer>
+        </CartProvider>
       </body>
     </html>
   );
